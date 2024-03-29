@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -11,19 +11,19 @@ public class RobotHardware {
 
     private LinearOpMode myOpMode = null;
 
-    private DcMotor BackLeft = null;
-    private DcMotor BackRight = null;
-    private DcMotor FrontLeft = null;
-    private DcMotor FrontRight = null;
-    private DcMotorSimple ArmMotor = null;
+    public DcMotor BackLeft = null;
+    public DcMotor BackRight = null;
+    public DcMotor FrontLeft = null;
+    public DcMotor FrontRight = null;
+    public DcMotorSimple ArmMotor = null;
 
-    private Servo claw = null;
-    private CRServo turn = null;
+    public Servo claw = null;
+    public CRServo turn = null;
 
-    public static final double MID_SERVO = 0.5;
-    public static final double HAND_SPEED = 0.02;
-    public static final double ARM_UP_POWER = 0.45;
-    public static final double ARM_DOWN_POWER = -0.45;
+    private static final double MID_SERVO = 0.5;
+    private static final double HAND_SPEED = 0.02;
+    private static final double ARM_UP_POWER = 0.45;
+    private static final double ARM_DOWN_POWER = -0.45;
 
     public RobotHardware(LinearOpMode opmode) {
         myOpMode = opmode;
@@ -47,44 +47,44 @@ public class RobotHardware {
     }
 
     // Rest of the class methods...
-}
+
 
     /**
      * Calculates the left/right motor powers required to achieve the requested
      * robot motions: Drive (Axial motion) and Turn (Yaw motion).
      * Then sends these power levels to the motors.
-     *
-     * @param Drive     Fwd/Rev driving power (-1.0 to 1.0) +ve is forward
-     * @param Turn      Right/Left turning power (-1.0 to 1.0) +ve is CW
      */
-    public void driveRobot(double Drive, double Turn) {
+    public void driveRobot(double forward, double strafe, double turnAmount) {
         // Combine drive and turn for blended motion.
-        double left  = Drive + Turn;
-        double right = Drive - Turn;
+        double FrontRight  = forward-strafe+turnAmount;
+        double FrontLeft = forward+strafe+turnAmount;
 
         // Scale the values so neither exceed +/- 1.0
-        double max = Math.max(Math.abs(left), Math.abs(right));
+        double max = Math.max(Math.abs(FrontLeft), Math.abs(FrontRight));
         if (max > 1.0)
         {
-            left /= max;
-            right /= max;
+            FrontRight /= max;
+            FrontLeft /= max;
         }
 
         // Use existing function to drive both wheels.
-        setDrivePower(left, right);
+        setDrivePower(FrontLeft, FrontRight, 1, 1);
     }
 
     /**
      * Pass the requested wheel motor powers to the appropriate hardware drive motors.
      *
-     * @param leftWheel     Fwd/Rev driving power (-1.0 to 1.0) +ve is forward
-     * @param rightWheel    Fwd/Rev driving power (-1.0 to 1.0) +ve is forward
+     * @param frontLeftWheel     Fwd/Rev driving power (-1.0 to 1.0) +ve is forward
+     * @param frontRightWheel    Fwd/Rev driving power (-1.0 to 1.0) +ve is forward
      */
-    public void setDrivePower(double leftWheel, double rightWheel) {
+    public void setDrivePower(double backLeftWheel, double backRightWheel, double frontLeftWheel, double frontRightWheel) {
         // Output the values to the motor drives.
-        leftDrive.setPower(leftWheel);
-        rightDrive.setPower(rightWheel);
+        FrontLeft.setPower(frontLeftWheel);
+        BackLeft.setPower(backLeftWheel);
+        FrontRight.setPower(frontRightWheel);
+        BackRight.setPower(backRightWheel);
     }
+
 
     /**
      * Pass the requested arm power to the appropriate hardware drive motor
@@ -92,17 +92,7 @@ public class RobotHardware {
      * @param power driving power (-1.0 to 1.0)
      */
     public void setArmPower(double power) {
-        armMotor.setPower(power);
+        ArmMotor.setPower(power);
     }
 
-    /**
-     * Send the two hand-servos to opposing (mirrored) positions, based on the passed offset.
-     *
-     * @param offset
-     */
-    public void setHandPositions(double offset) {
-        offset = Range.clip(offset, -0.5, 0.5);
-        leftHand.setPosition(MID_SERVO + offset);
-        rightHand.setPosition(MID_SERVO - offset);
-    }
 }

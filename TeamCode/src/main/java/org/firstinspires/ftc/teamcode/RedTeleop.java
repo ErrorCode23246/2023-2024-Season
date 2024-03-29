@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import RobotHardware;
+import org.firstinspires.ftc.teamcode.RobotHardware;
 
 @TeleOp(name="RedTeleop")
 public class RedTeleop extends LinearOpMode {
